@@ -6,7 +6,7 @@ import { prefersReducedMotion } from "../utils/motion.js";
 const SMOOTH_SCROLL_ENABLED = false;
 
 // Élément fixe en haut de page dont on tient compte pour le scroll vers une ancre.
-const NAV_SELECTOR = ".nav_fixed";
+const NAV_SELECTOR = ".navbar9_component";
 
 const ANCHOR_DURATION = 2; // secondes
 const HASH_LOAD_DELAY = 400; // ms avant le scroll animé à l'arrivée avec un #hash
@@ -130,6 +130,10 @@ export function getLenis() {
 }
 
 export function initCore() {
+  // Enregistrement unique de ScrollTrigger, partagé par tous les modules.
+  if (typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined") {
+    window.gsap.registerPlugin(window.ScrollTrigger);
+  }
   initLenis();
   initAnchors();
 }

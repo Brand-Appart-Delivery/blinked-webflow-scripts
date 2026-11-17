@@ -1,0 +1,1 @@
+gsap.registerPlugin(ScrollTrigger);const masks=document.querySelectorAll(".image-mask");masks.forEach((e=>{const r=e.querySelector(".image-reveal");r&&gsap.fromTo(r,{scale:1.15,opacity:0,yPercent:8},{scale:1,opacity:1,yPercent:0,duration:1.2,ease:"power2.out",scrollTrigger:{trigger:e,start:"top 90%",once:!0}})}));

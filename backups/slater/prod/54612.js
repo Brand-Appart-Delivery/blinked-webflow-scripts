@@ -1,0 +1,1 @@
+gsap.registerPlugin(ScrollTrigger);const footerLogo=document.querySelector(".footer_logo_img");footerLogo&&gsap.fromTo(footerLogo,{y:"25rem",opacity:0},{y:"7rem",opacity:1,ease:"none",scrollTrigger:{trigger:".footer13_component",start:"top 80%",end:"bottom bottom",scrub:2}});

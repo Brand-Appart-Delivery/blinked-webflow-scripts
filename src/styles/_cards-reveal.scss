@@ -1,0 +1,20 @@
+// Apparition des cartes (src/animations/cards-reveal.js) — repris de Slater.
+// État de départ caché, seulement quand le JS tourne (classe posée par Webflow)
+// et que l'utilisateur accepte les animations.
+// Garder la liste synchronisée avec SELECTORS dans cards-reveal.js.
+
+@media (prefers-reduced-motion: no-preference) {
+  html.w-mod-js {
+    .services_card,
+    .chiffre-cle_block_bloc,
+    .case-studies_block,
+    .temoignages_block,
+    .blog34_item-link,
+    .groupe_grid_block,
+    .processus_layout_card {
+      opacity: 0;
+      transform: translateY(30px);
+      will-change: transform, opacity;
+    }
+  }
+}

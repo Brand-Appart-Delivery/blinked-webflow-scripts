@@ -1,0 +1,1 @@
+document.querySelectorAll(".icon-svg").forEach((e=>{const t=e.id,r=e.className,s=e.src;fetch(s).then((e=>e.text())).then((s=>{const c=(new DOMParser).parseFromString(s,"image/svg+xml").querySelector("svg");t&&(c.id=t),r&&c.setAttribute("class",r+" replaced-svg"),c.removeAttribute("xmlns:a"),e.parentNode.replaceChild(c,e)}))}));
