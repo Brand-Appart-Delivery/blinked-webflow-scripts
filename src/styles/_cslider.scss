@@ -1,0 +1,338 @@
+// Carrousel de cas clients (fiches service) — voir components/cases-slider.js.
+//
+// Les classes cslider_* ont leur style de base dans Webflow. Ici : les
+// dimensions par écran, les états pilotés par le JS (.is-active, .is-near)
+// et les transitions, que le Designer ne sait pas faire.
+
+$ease: cubic-bezier(0.65, 0, 0.35, 1);
+$duration: 0.65s;
+
+[data-cslider] {
+  --cs-small: 16.25rem; // carte fermée
+  --cs-big: 35rem; // carte active
+  --cs-height: 27.5rem;
+  --cs-gap: 1.5rem;
+  --cs-drop: 3rem; // décalage des voisines directes
+
+  @media (max-width: 767px) {
+    --cs-small: 9rem;
+    --cs-big: min(22rem, calc(100vw - 4rem));
+    --cs-height: 26rem;
+    --cs-gap: 0.75rem;
+    --cs-drop: 1.5rem;
+  }
+}
+
+// --- Piste ------------------------------------------------------------------
+[data-cslider-viewport] {
+  position: relative;
+  overflow: hidden;
+  min-height: calc(var(--cs-height) + var(--cs-drop));
+  touch-action: pan-y; // le glissé horizontal est géré par le JS
+  user-select: none;
+}
+
+[data-cslider] .cslider_track {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--cs-gap);
+  width: max-content;
+  will-change: transform;
+  transition: transform $duration $ease;
+}
+
+// --- Carte ------------------------------------------------------------------
+[data-cslider] .cslider_card {
+  position: relative;
+  overflow: hidden;
+  width: var(--cs-small);
+  height: var(--cs-height);
+  padding: 0;
+  transition:
+    width $duration $ease,
+    transform $duration $ease;
+
+  &.is-active {
+    width: var(--cs-big);
+    padding: 0;
+    cursor: pointer;
+  }
+
+  &.is-near {
+    transform: translateY(var(--cs-drop));
+  }
+}
+
+[data-cslider] .cslider_image {
+  transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+[data-cslider] .cslider_card.is-active:hover .cslider_image {
+  transform: scale(1.04);
+}
+
+// Voile : léger sur les cartes fermées, bleu nuit dégradé sur la carte active
+[data-cslider] .cslider_veil {
+  position: absolute;
+  inset: 0;
+  transition: opacity $duration ease;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    opacity: 0;
+    background: linear-gradient(
+      180deg,
+      rgba(29, 40, 84, 0.6) 0%,
+      rgba(29, 40, 84, 0.35) 45%,
+      rgba(29, 40, 84, 0.95) 100%
+    );
+    transition: opacity $duration ease;
+  }
+}
+
+[data-cslider] .is-active .cslider_veil::after {
+  opacity: 1;
+}
+
+// Cartouche logo (cartes fermées) : centré, disparaît sur la carte active
+[data-cslider] .cslider_logo {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  max-width: calc(var(--cs-small) - 2rem);
+  transition: opacity 0.3s ease 0.25s;
+}
+
+[data-cslider] .is-active .cslider_logo {
+  opacity: 0;
+  transition-delay: 0s;
+}
+
+// Logo absent : nom du client à la place
+[data-cslider] .cslider_logo-img.w-dyn-bind-empty {
+  display: none;
+}
+
+[data-cslider] .cslider_logo:has(.cslider_logo-img:not(.w-dyn-bind-empty)) [data-cslider-logo-name] {
+  display: none;
+}
+
+[data-cslider] [data-cslider-logo-name] {
+  color: #1d2854;
+  font-weight: 500;
+  text-align: center;
+}
+
+// Contenu (carte active) : largeur fixe pour que le texte ne se réorganise
+// pas pendant que la carte s'élargit
+[data-cslider] .cslider_content {
+  position: absolute;
+  top: 2rem;
+  bottom: 2rem;
+  left: 2rem;
+  width: calc(var(--cs-big) - 4rem);
+  // La hauteur vient de top / bottom (le 100 % de Webflow faisait déborder
+  // le bouton sous la carte)
+  height: auto;
+  min-height: 0;
+  max-height: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  opacity: 0;
+  visibility: hidden;
+  transform: translateY(0.5rem);
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease,
+    visibility 0s linear 0.2s;
+
+  @media (max-width: 767px) {
+    top: 1.5rem;
+    bottom: 1.5rem;
+    left: 1.5rem;
+    width: calc(var(--cs-big) - 3rem);
+  }
+}
+
+[data-cslider] .is-active .cslider_content {
+  opacity: 1;
+  visibility: visible;
+  transform: none;
+  transition:
+    opacity 0.45s ease 0.3s,
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1) 0.3s,
+    visibility 0s;
+}
+
+// Bas de carte : chiffres puis bouton, empilés
+[data-cslider] .cslider_bottom {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.5rem;
+}
+
+[data-cslider] .cslider_button {
+  flex: none;
+}
+
+// Chiffres côte à côte : chacun prend la moitié, le texte long passe à la ligne
+[data-cslider] .cslider_kpis > * {
+  flex: 1 1 0;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+[data-cslider] .cslider_kpi {
+  white-space: nowrap;
+}
+
+// Pas d'image carte dans le CMS : fond bleu nuit de la carte, sans image cassée
+[data-cslider] .cslider_image.w-dyn-bind-empty {
+  display: none;
+}
+
+// Chiffre clé vide dans le CMS : bloc masqué
+[data-cslider] [data-cslider-kpi]:has(.cslider_kpi.w-dyn-bind-empty) {
+  display: none;
+}
+
+[data-cslider] .cslider_accroche.w-dyn-bind-empty {
+  display: none;
+}
+
+// --- Bouton « Découvrir » : flèche qui glisse ----------------------------------
+[data-cslider] .cslider_button-icon {
+  transition: transform 0.3s ease;
+}
+
+[data-cslider] .cslider_button:hover .cslider_button-icon,
+[data-cslider] .cslider_button:focus-visible .cslider_button-icon {
+  transform: translateX(0.25rem);
+}
+
+[data-cslider] .cslider_button:focus-visible,
+[data-cslider] .cslider_arrow:focus-visible {
+  outline: 0.125rem solid #f14624;
+  outline-offset: 0.125rem;
+}
+
+// --- Flèches de navigation ------------------------------------------------------
+[data-cslider] .cslider_nav {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+[data-cslider] .cslider_arrow {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  color: #0e1225;
+  background-color: #ffffff;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    border-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.3s ease;
+
+  // Icône parfaitement centrée (l'embed Webflow ajoute une ligne de texte)
+  .w-embed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
+  svg {
+    display: block;
+  }
+
+  &:hover {
+    background-color: #0e1225;
+    border-color: #0e1225;
+    color: #ffffff;
+  }
+
+  // Survol : la flèche sort dans son sens et revient par le côté opposé
+  // (même animation que les boutons flèche du site)
+  &[data-cslider-next]:hover svg {
+    animation: cslider-arrow-next 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  &[data-cslider-prev]:hover svg {
+    animation: cslider-arrow-prev 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  &:active {
+    transform: scale(0.92);
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+@keyframes cslider-arrow-next {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  46% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+@keyframes cslider-arrow-prev {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(-150%);
+    opacity: 0;
+  }
+  46% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+// --- Sans transition (boucle, redimensionnement) / mouvement réduit -----------
+[data-cslider].is-instant,
+[data-cslider].is-instant * {
+  transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  [data-cslider] .cslider_track,
+  [data-cslider] .cslider_card,
+  [data-cslider] .cslider_card *,
+  [data-cslider] .cslider_veil::after {
+    transition: none !important;
+  }
+
+  [data-cslider] .cslider_arrow:hover svg {
+    animation: none;
+  }
+}

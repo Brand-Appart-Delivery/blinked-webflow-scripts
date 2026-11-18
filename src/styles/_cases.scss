@@ -1,0 +1,69 @@
+// Page Réalisations (section [data-cases], classes cases_* dans Webflow).
+// Ici : ce que le Designer ne sait pas faire (variante de carte selon le CMS,
+// séparateurs du filtre, animations au survol).
+
+// --- Filtre ---------------------------------------------------------------
+
+// Les séparateurs « / » sont des éléments Webflow (.cases_filter-sep).
+
+.cases_filter.is-active .cases_filter-count {
+  color: inherit;
+}
+
+// Mobile : la rangée défile horizontalement, sans barre visible.
+.cases_filters {
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+// --- Cartes -----------------------------------------------------------------
+
+// Variantes gérées dans Webflow : le nom en grand (.cases_card-name) est sous
+// l'image ; avec « Image carte » elle le recouvre, sans image Webflow la
+// masque (.w-dyn-bind-empty) et la carte bleu nuit affiche le nom.
+// Ici : le petit nom client et le voile (qui grisait le nom en grand) sont
+// retirés de la variante sans image. Dans le Designer, même règle via la
+// visibilité conditionnelle « Image carte is set » sur ces deux éléments.
+.cases_card:has(.cases_card-image.w-dyn-bind-empty) {
+  .cases_card-client,
+  .cases_card-veil {
+    display: none;
+  }
+}
+
+// Survol : flèche qui part à droite / revient par la gauche (comme les
+// boutons flèche du site) et léger zoom de l'image.
+.cases_card:hover,
+.cases_card:focus-within {
+  .footer_submit-arrow {
+    transform: translate(150%, -50%);
+    opacity: 0;
+  }
+
+  .footer_submit-arrow.is-in {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+
+  .cases_card-image {
+    transform: scale(1.04);
+  }
+}
+
+.cases_card-link:focus-visible {
+  outline: 0.125rem solid #f14624;
+  outline-offset: 0.25rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cases_card-image {
+    transition: none;
+  }
+
+  .cases_card:hover .cases_card-image {
+    transform: none;
+  }
+}

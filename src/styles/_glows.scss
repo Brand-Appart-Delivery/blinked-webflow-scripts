@@ -1,0 +1,43 @@
+// Halos orange en fond de page (maquette Figma 2896-793, fiche cas client).
+//
+// STRUCTURE (Webflow) : [data-glows] sur le conteneur des sections sombres
+// (main-wrapper du template Réalisations). Les sections .svc_dark qu'il
+// contient deviennent transparentes : le fond bleu nuit et les halos sont
+// portés par le conteneur, donc les halos passent d'une section à l'autre.
+//
+// Logique qui s'adapte à la hauteur de la page : un motif de 2 halos (un à
+// droite, un à gauche) répété verticalement. Plus la page est longue, plus il
+// y a de halos ; leur taille suit la largeur de l'écran (min() avec vw).
+// Les sections avec leur propre fond (hero, carrousel, footer) les recouvrent.
+
+$glow-color: #f14624;
+// Hauteur du motif (un halo à droite, un à gauche). Chaque halo doit tenir
+// entier dans sa moitié du motif, sinon il est coupé net au raccord.
+$glow-step: 140rem;
+$glow-start: 50rem; // décalage : premier halo sous le hero
+
+[data-glows] {
+  --glow-w: min(46rem, 70vw);
+  --glow-h: min(32rem, 60vw); // < 1/4 du motif : pas de coupure
+  background-color: #0e1225;
+  background-image:
+    radial-gradient(
+      ellipse var(--glow-w) var(--glow-h) at 100% 25%,
+      rgba($glow-color, 0.42),
+      rgba($glow-color, 0.12) 45%,
+      rgba($glow-color, 0) 100%
+    ),
+    radial-gradient(
+      ellipse var(--glow-w) var(--glow-h) at 0% 75%,
+      rgba($glow-color, 0.42),
+      rgba($glow-color, 0.12) 45%,
+      rgba($glow-color, 0) 100%
+    );
+  background-size: 100% $glow-step;
+  background-position: 0 $glow-start;
+  background-repeat: repeat-y;
+
+  > .svc_dark {
+    background-color: transparent;
+  }
+}

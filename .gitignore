@@ -5,3 +5,8 @@ src/assets
 # macOS
 .DS_Store
 Icon?
+
+# Sauvegardes CMS : contenu client (brouillons compris), gardées en local
+# seulement (le dépôt est public, jsDelivr)
+backups/cms-backup-*.json
+backups/webflow-*.md

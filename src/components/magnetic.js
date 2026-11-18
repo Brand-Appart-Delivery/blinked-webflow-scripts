@@ -3,17 +3,20 @@
 //
 // STRUCTURE (attribut à poser dans Webflow) :
 //   [data-magnetic]          n'importe quel élément (bouton, lien…)
+// Les boutons lecture vidéo ([data-video-play]) sont aussi magnétiques.
 
 import { hasGsap, hasFinePointer } from "../utils/env.js";
 import { prefersReducedMotion } from "../utils/motion.js";
 
+const SELECTOR = "[data-magnetic], [data-video-play]";
 const STRENGTH = 3; // diviseur : plus petit = attraction plus forte
 
 export function initMagnetic(root = document) {
   if (!hasGsap() || !hasFinePointer() || prefersReducedMotion()) return;
   const { gsap } = window;
 
-  root.querySelectorAll("[data-magnetic]:not([data-magnetic-ready])").forEach((el) => {
+  root.querySelectorAll(SELECTOR).forEach((el) => {
+    if (el.hasAttribute("data-magnetic-ready")) return;
     el.setAttribute("data-magnetic-ready", "");
 
     // quickTo : une seule tween réutilisée, fluide à chaque mousemove.

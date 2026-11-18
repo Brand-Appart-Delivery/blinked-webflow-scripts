@@ -1,0 +1,269 @@
+// Template Services (fiches SEA / SMA / Programmatique) — maquette Figma 3067-9772.
+//
+// La mise en page est dans Webflow (classes svc_*, visibles dans le Designer).
+// Ici, seulement ce que le Designer ne sait pas faire : accent du titre,
+// survols, éléments vides masqués, décor des sections sombres, tablette /
+// mobile.
+//
+// Sections (attributs posés dans Webflow) :
+//   [data-svc-hero]        hero (dans .bg_gradient_hero, comme la home)
+//   [data-svc-intro]       « Notre lecture » + 3 points
+//   [data-svc-problem]     « Le problème » (4 lignes .svc_problem)
+//   [data-svc-expertises]  grille des expertises (Collection List)
+//   [data-svc-video]       vidéo, masquée si le champ vidéo est vide
+//   [data-svc-benefits]    3 cartes .svc_benefit
+
+$orange: #f14624;
+$navy: #0e1225;
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+// --- Hero ---------------------------------------------------------------------
+// Accent du titre (span posé par content/title-accent.js, style de la home)
+.svc_hero_title .hero_title-accent {
+  -webkit-text-fill-color: transparent;
+}
+
+// Bouton contour : se remplit au survol
+.svc_button_outline {
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    transform 0.6s $ease-out;
+
+  &:hover,
+  &:focus-visible {
+    background-color: #ffffff;
+    color: $navy;
+  }
+
+  &:active {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: 0.125rem solid $orange;
+    outline-offset: 0.125rem;
+  }
+}
+
+// Info de la carte vide : masquée
+.svc_info:has(.svc_info_value.w-dyn-bind-empty) {
+  display: none;
+}
+
+// --- Problème / points : ligne vide masquée -------------------------------------
+.svc_problem:has(.svc_h3.w-dyn-bind-empty),
+.svc_point:has(.svc_point_text.w-dyn-bind-empty) {
+  display: none;
+}
+
+// --- Expertises : illustration (le logo est masqué dans Webflow) ---------------
+.svc_exp_illu.w-dyn-bind-empty {
+  display: none;
+}
+
+.svc_exp_illu {
+  transition: transform 0.8s $ease-out;
+}
+
+.svc_exp_card:hover .svc_exp_illu {
+  transform: scale(1.02);
+}
+
+// Halo orange en haut à droite : élément .svc_glow dans Webflow (la section
+// .svc_dark est en isolation: isolate, le halo en z-index -1 passe dessous).
+
+// --- Vidéo : section masquée tant qu'aucune vidéo n'est renseignée ------------
+// (halo en bas à gauche : élément .svc_glow.is-bottom-left dans Webflow)
+[data-svc-video]:not(:has(iframe, .plyr)),
+[data-svc-video]:has(.w-video.w-dyn-bind-empty) {
+  display: none;
+}
+
+// Lecteur (components/video-player.js) : la vidéo remplit le cadre 16:9,
+// poster + bouton lecture par-dessus jusqu'au clic, puis lecteur Plyr.
+.svc_video_player {
+  // Thème Plyr aux couleurs du site
+  --plyr-color-main: #{$orange};
+  --plyr-video-background: #000000;
+  --plyr-range-thumb-background: #ffffff;
+  --plyr-range-fill-background: #{$orange};
+  --plyr-video-control-background-hover: #{$orange};
+  --plyr-control-radius: 999px;
+  --plyr-font-family: inherit;
+
+  .w-video {
+    padding-top: 0 !important;
+  }
+
+  iframe {
+    width: 100%;
+    height: 100%;
+  }
+
+  .plyr {
+    position: absolute;
+    inset: 0;
+    height: 100%;
+  }
+
+  .plyr__video-wrapper {
+    height: 100%;
+  }
+}
+
+.svc_video_poster,
+.svc_video_play {
+  transition: opacity 0.4s ease;
+}
+
+.svc_video_play {
+  transition:
+    opacity 0.4s ease,
+    background-color 0.3s ease;
+
+  // Icône parfaitement centrée (l'embed Webflow ajoute une ligne de texte)
+  .w-embed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+    transition: transform 0.4s $ease-out;
+  }
+
+  svg {
+    display: block;
+    // Le triangle paraît décalé à gauche : léger recentrage optique
+    margin-left: 0.1875rem;
+  }
+
+  // Le bouton bouge avec la souris (data-magnetic, GSAP) : le survol agit
+  // sur l'icône pour ne pas entrer en conflit avec ce déplacement.
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.4);
+
+    .w-embed {
+      transform: scale(1.15);
+    }
+  }
+
+  &:focus-visible {
+    outline: 0.125rem solid $orange;
+    outline-offset: 0.25rem;
+  }
+}
+
+// Chargement de Plyr : le bouton pulse doucement
+.svc_video_player.is-loading .svc_video_play {
+  animation: svc-video-loading 1s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes svc-video-loading {
+  to {
+    opacity: 0.5;
+  }
+}
+
+.svc_video_player.is-playing {
+  .svc_video_poster,
+  .svc_video_play {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+// --- Bénéfices : carte vide masquée, image absente -----------------------------
+.svc_benefit:has(.svc_h3.w-dyn-bind-empty),
+.svc_benefit_img.w-dyn-bind-empty {
+  display: none;
+}
+
+// --- Tablette -------------------------------------------------------------------
+@media (max-width: 991px) {
+  .main-wrapper .svc_hero {
+    grid-template-columns: 1fr;
+  }
+
+  .main-wrapper .svc_hero_title {
+    font-size: 3rem;
+  }
+
+  .main-wrapper .svc_hero_curve {
+    display: none;
+  }
+
+  .main-wrapper .svc_intro_row,
+  .main-wrapper .svc_problem_row {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .main-wrapper .svc_problem_head {
+    flex-basis: auto;
+  }
+
+  .main-wrapper .svc_problem_list {
+    width: 100%;
+  }
+
+  .main-wrapper .svc_exp_grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .main-wrapper .svc_benefits {
+    grid-template-columns: 1fr;
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+  }
+}
+
+// --- Mobile ---------------------------------------------------------------------
+@media (max-width: 767px) {
+  .main-wrapper .svc_pad {
+    padding-top: 5rem;
+    padding-bottom: 5rem;
+  }
+
+  .main-wrapper .svc_hero_title {
+    font-size: 2.5rem;
+  }
+
+  .main-wrapper .svc_h2 {
+    font-size: 2.25rem;
+  }
+
+  .main-wrapper .svc_exp_grid {
+    grid-template-columns: 1fr;
+    row-gap: 3rem;
+  }
+
+  .main-wrapper .svc_intro_points {
+    margin-top: 3rem;
+  }
+
+  .main-wrapper .svc_points {
+    grid-template-columns: 1fr;
+  }
+
+  .main-wrapper .svc_infos {
+    flex-wrap: wrap;
+  }
+}
+
+// --- Mouvement réduit -------------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .svc_video_player.is-loading .svc_video_play {
+    animation: none;
+  }
+
+  .svc_button_outline,
+  .svc_exp_illu {
+    transition: none;
+  }
+
+  .svc_exp_card:hover .svc_exp_illu {
+    transform: none;
+  }
+}

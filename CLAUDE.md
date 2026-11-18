@@ -40,7 +40,18 @@ Toujours répondre à Axel en français. Commentaires de code en français, simp
 - `backups/` : sauvegarde JSON des fiches CMS **avant** toute modification en masse via
   l'API / MCP Webflow (`cms-backup-AAAA-MM-JJ-<sujet>.json`).
 
+## Connaissance du site
+
+- **Lire `docs/site/README.md` avant toute tâche sur le site** : architecture, CMS, composants,
+  modules JS par page, code inline restant à migrer, problèmes connus (audit du 2026-11-17).
+  Détails : `docs/site/cms.md`, `docs/site/webflow-structure.md`, `docs/site/front.md`.
+- Composants Webflow : on cible les classes existantes du site (Relume / Client-First) pour
+  ne pas imposer de modifications dans le Designer ; `data-*` pour tout nouveau comportement.
+
 ## Contenu (MCP Webflow)
+
+- Site Webflow : `Blinked` (id `6979ce915767387cd0f9aa37`), staging `blinkedxmekaa.webflow.io`,
+  production `www.blinked.fr`. Ancien code Slater archivé dans `backups/slater/`.
 
 - Toute correction de contenu s'applique à toutes les langues du site (FR **et** EN),
   y compris les champs cachés (ex. `markdown`) et les collections en double.

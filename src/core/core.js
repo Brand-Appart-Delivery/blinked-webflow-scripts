@@ -1,9 +1,19 @@
 // src/core/core.js — démarrage global : scroll fluide (Lenis, optionnel) + ancres.
 import { requestScrollRefresh } from "../utils/scroll-refresh.js";
 import { prefersReducedMotion } from "../utils/motion.js";
+import { initOverscroll } from "./overscroll.js";
+import { loadScript, loadStyle } from "../utils/load-asset.js";
 
 // false = scroll natif. true = Lenis (le script Lenis doit être chargé dans Webflow).
 const SMOOTH_SCROLL_ENABLED = false;
+
+// Pages en scroll fluide même si SMOOTH_SCROLL_ENABLED est à false : fiche cas
+// client (hero photo, rebond natif coupé dans _base.scss). Lenis y adoucit
+// l'arrivée en haut et en bas de page. Chargé à la demande depuis jsDelivr.
+const SMOOTH_PAGES = "[data-dark-hero]";
+const LENIS_VERSION = "1.1.20";
+const LENIS_JS = `https://cdn.jsdelivr.net/npm/lenis@${LENIS_VERSION}/dist/lenis.min.js`;
+const LENIS_CSS = `https://cdn.jsdelivr.net/npm/lenis@${LENIS_VERSION}/dist/lenis.css`;
 
 // Élément fixe en haut de page dont on tient compte pour le scroll vers une ancre.
 const NAV_SELECTOR = ".navbar9_component";
@@ -82,12 +92,20 @@ function initAnchors() {
 }
 
 // Seul endroit où Lenis est créé et branché sur GSAP / ScrollTrigger.
-export function initLenis() {
+export function initLenis(force = false) {
   if (lenisInstance) return lenisInstance;
-  if (!SMOOTH_SCROLL_ENABLED || typeof window.Lenis === "undefined") return null;
+  if ((!SMOOTH_SCROLL_ENABLED && !force) || typeof window.Lenis === "undefined") return null;
   if (prefersReducedMotion()) return null;
 
-  lenisInstance = new window.Lenis({ duration: 1.2, smoothWheel: true, anchors: false });
+  // Un Lenis cassé (autre version chargée par Webflow) ne doit pas bloquer
+  // le reste du JS : sans lui, on garde le scroll natif.
+  try {
+    lenisInstance = new window.Lenis({ duration: 1.2, smoothWheel: true, anchors: false });
+  } catch (error) {
+    console.warn("[Blinked] Lenis :", error);
+    lenisInstance = null;
+    return null;
+  }
 
   const hasGsap = typeof window.gsap !== "undefined";
   if (hasGsap) {
@@ -125,6 +143,19 @@ export function initLenis() {
   return lenisInstance;
 }
 
+// Scroll fluide sur les pages SMOOTH_PAGES (Lenis chargé si absent)
+function initSmoothPage() {
+  if (lenisInstance || prefersReducedMotion() || !document.querySelector(SMOOTH_PAGES)) return;
+  // Notre version de Lenis, chargée après coup (celle déjà présente sur la
+  // page peut être cassée) ; tout le reste du JS est déjà démarré.
+  loadStyle(LENIS_CSS).catch(() => {});
+  loadScript(LENIS_JS)
+    .then(() => {
+      if (initLenis(true)) requestScrollRefresh(0);
+    })
+    .catch((error) => console.warn("[Blinked] Lenis :", error));
+}
+
 export function getLenis() {
   return lenisInstance;
 }
@@ -135,5 +166,7 @@ export function initCore() {
     window.gsap.registerPlugin(window.ScrollTrigger);
   }
   initLenis();
+  initSmoothPage();
   initAnchors();
+  initOverscroll();
 }

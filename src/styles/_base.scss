@@ -1,0 +1,84 @@
+// Réglages globaux.
+
+// Rebond élastique (Mac / iOS) conservé sur toutes les pages. La home le
+// coupait avec un CSS inline (html, body { overscroll-behavior: none }) :
+// on le rétablit. La couleur unie de la zone de rebond est gérée par
+// src/core/overscroll.js (haut de page / footer).
+html,
+body {
+  overscroll-behavior-y: auto !important;
+}
+
+// --- Prolongement du hero sombre dans le rebond du haut ----------------------
+// Chrome ne peint que la COULEUR du fond de <html> dans la zone de rebond
+// (pas d'images ni de dégradés). On place donc un vrai élément juste
+// au-dessus de la page (top négatif : hors champ, ne crée pas de scroll) ;
+// pendant le rebond, la page descend et le révèle.
+// Il reprend le bord haut du hero (.bg_gradient_hero) : fond bleu nuit, halo
+// rouge à gauche (#842e29 → bleu nuit sur ~25 % de la largeur) et lignes
+// fines verticales à 30 / 50 / 70 % (image « traits »). Couleurs relevées sur
+// le rendu réel.
+$hero-base: #0e1225;
+$line: rgba(150, 55, 45, 0.55);
+
+@function vline($x) {
+  @return linear-gradient(
+    90deg,
+    transparent calc(#{$x} - 0.5px),
+    $line calc(#{$x} - 0.5px),
+    $line calc(#{$x} + 0.5px),
+    transparent calc(#{$x} + 0.5px)
+  );
+}
+
+// Positionné par rapport au bloc initial (haut du document) : pas besoin de
+// rendre le body « relative », ce qui risquerait de décaler d'autres éléments.
+body:has(.bg_gradient_hero)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%; // collé au-dessus du haut de la page
+  height: 100vh;
+  pointer-events: none;
+  background-color: $hero-base;
+  background-image:
+    vline(30%),
+    vline(50%),
+    vline(70%),
+    radial-gradient(
+      ellipse 30% 140% at 0% 100%,
+      #8a3029 0%,
+      rgba(96, 38, 41, 0.75) 35%,
+      rgba(15, 18, 37, 0) 100%
+    );
+}
+
+// Autre hero sombre (fiche cas client, [data-dark-hero]) : couleur unie
+body:has([data-dark-hero]):not(:has(.bg_gradient_hero))::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  height: 100vh;
+  pointer-events: none;
+  background-color: $hero-base;
+}
+
+// Fiche cas client (hero photo, [data-dark-hero]) : pas de rebond élastique,
+// la photo reste calée en haut de page. Le CSS ne permet pas de couper le
+// rebond du haut seulement : il est aussi coupé en bas sur cette page.
+html:has([data-dark-hero]),
+html:has([data-dark-hero]) body {
+  overscroll-behavior-y: none !important;
+}
+
+// --- Prolongement du logo du footer dans le rebond du bas ------------------
+// Fond de <html> (Safari le peint ; Chrome n'en peint que la couleur).
+html:has(.footer_logo_img) {
+  background-image: url("https://cdn.prod.website-files.com/6979ce915767387cd0f9aa37/697b3a091227392107f88cdd_transport.svg");
+  background-repeat: no-repeat;
+  background-size: 100% auto;
+  background-position: left calc(100% + 7rem);
+}

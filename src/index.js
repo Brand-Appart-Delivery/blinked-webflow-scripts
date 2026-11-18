@@ -10,12 +10,22 @@
 
 import { onReady } from "./utils/on-ready.js";
 import { initCore } from "./core/core.js";
-import { initCollapses } from "./components/collapse.js";
 import { initSvgInline } from "./content/svg-inline.js";
+import { initTitleAccent } from "./content/title-accent.js";
+import { initCaseStudy } from "./content/case-study.js";
+import { initBento } from "./components/bento.js";
 import { initSliders } from "./components/sliders.js";
 import { initMagnetic } from "./components/magnetic.js";
+import { initCasesFilter } from "./components/cases-filter.js";
+import { initCasesSlider } from "./components/cases-slider.js";
+import { initVideoPlayer } from "./components/video-player.js";
+import { initGallery } from "./components/gallery.js";
+import { initNavDropdown } from "./components/nav-dropdown.js";
+import { initNavScroll } from "./components/nav-scroll.js";
 import { initCardsReveal } from "./animations/cards-reveal.js";
 import { initImageReveal } from "./animations/image-reveal.js";
+import { initParallax, initStoryParallax } from "./animations/parallax.js";
+import { initRowsReveal } from "./animations/rows-reveal.js";
 import { initFooterLogo } from "./animations/footer-logo.js";
 import { initTestimonialsSticky } from "./sections/testimonials-sticky.js";
 
@@ -24,15 +34,26 @@ onReady(() => {
 
   // Contenu CMS
   initSvgInline();
+  initTitleAccent();
+  initBento(); // avant case-study : retire les cases vides du bento
+  initCaseStudy();
 
   // Composants
-  initCollapses();
   initSliders();
   initMagnetic();
+  initNavDropdown();
+  initNavScroll();
+  initCasesFilter();
+  initCasesSlider();
+  initVideoPlayer();
+  initGallery();
 
   // Animations et sections (en dernier)
   initCardsReveal();
   initImageReveal();
+  initParallax();
+  initStoryParallax();
+  initRowsReveal();
   initFooterLogo();
   initTestimonialsSticky();
 });

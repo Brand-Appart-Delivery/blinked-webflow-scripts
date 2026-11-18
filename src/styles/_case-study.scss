@@ -1,0 +1,272 @@
+// Fiche cas client (template Réalisations, maquette Figma 2896-793).
+//
+// La mise en page des sections et des composants « CS · … » est dans Webflow.
+// Ici : ce que le Designer ne sait pas faire — unités des chiffres
+// (content/case-study.js), champs vides masqués, galerie qui déborde à droite
+// et défile (components/gallery.js), lecteur Plyr dans les médias
+// (components/video-player.js).
+
+$orange: #f14624;
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+// --- Chiffres : unité plus petite (« +35 % ») ------------------------------
+.cs_figure_unit {
+  margin-left: 0.04em;
+  font-size: 0.55em;
+  letter-spacing: 0;
+}
+
+// --- Champs vides (content/case-study.js) ----------------------------------
+[data-cs-block] .is-empty,
+[data-cs-temoignage].is-empty {
+  display: none !important;
+}
+
+// --- Rich text « Récit » : les composants s'enchaînent sans marges ajoutées --
+.cs_recit > [data-cs-block] {
+  margin: 0;
+}
+
+.cs_recit [data-cs-block] :is(h2, h3, p) {
+  margin-top: 0;
+}
+
+// --- Médias vidéo : bouton lecture, lecteur Plyr ----------------------------
+[data-cs-block] .cs_media[data-video-player] {
+  --plyr-color-main: #{$orange};
+  --plyr-video-background: #000000;
+  --plyr-range-thumb-background: #ffffff;
+  --plyr-range-fill-background: #{$orange};
+  --plyr-video-control-background-hover: #{$orange};
+  --plyr-control-radius: 999px;
+  --plyr-font-family: inherit;
+}
+
+// Lecteur posé par-dessus le poster (créé par le JS)
+.video_frame {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+
+  .plyr {
+    height: 100%;
+  }
+
+  .plyr__video-wrapper {
+    height: 100%;
+  }
+
+  video {
+    object-fit: cover;
+  }
+}
+
+.cs_play {
+  transition:
+    opacity 0.4s ease,
+    background-color 0.3s ease;
+
+  // Le bouton suit la souris (magnetic.js) : le survol agit sur l'icône
+  .cs_play_icon {
+    transition: transform 0.4s $ease-out;
+  }
+
+  &:hover .cs_play_icon {
+    transform: scale(1.15);
+  }
+
+  &:focus-visible {
+    outline: 0.125rem solid $orange;
+    outline-offset: 0.25rem;
+  }
+
+  &[hidden] {
+    display: none;
+  }
+}
+
+.cs_media_img,
+.cs_media_veil {
+  transition: opacity 0.4s ease;
+}
+
+.cs_media.is-loading .cs_play {
+  animation: cs-video-loading 1s ease-in-out infinite alternate;
+  pointer-events: none;
+}
+
+@keyframes cs-video-loading {
+  to {
+    opacity: 0.5;
+  }
+}
+
+.cs_media.is-playing {
+  .cs_media_img,
+  .cs_media_veil,
+  .cs_play {
+    opacity: 0;
+    pointer-events: none;
+  }
+}
+
+// Sans vidéo : pas de voile « vidéo » assombri
+.cs_media.is-static .cs_media_veil.is-video {
+  opacity: 0;
+}
+
+// --- Galerie de créas : piste qui déborde à droite de l'écran ---------------
+.cs_gallery_track {
+  display: flex;
+  overflow-x: auto;
+  overscroll-behavior-x: contain;
+  // proximity : sans arrêt forcé en bout de piste quand elle dépasse à peine
+  scroll-snap-type: x proximity;
+  scrollbar-width: none;
+  // Pleine largeur : les cartes sont coupées au bord de l'écran, pas du
+  // conteneur. Les limites restent celles du contenu : au départ la première
+  // carte est alignée sur le texte, en fin de piste la dernière carte
+  // s'arrête sur le bord droit du conteneur.
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-left: calc(50vw - 50%);
+  padding-right: calc(50vw - 50%);
+  // scroll-padding : calculé en JS (components/gallery.js)
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  > * {
+    flex: none;
+    scroll-snap-align: start;
+  }
+
+  // Glisser à la souris (components/gallery.js)
+  @media (pointer: fine) {
+    cursor: grab;
+  }
+
+  &.is-dragging {
+    cursor: grabbing;
+    scroll-snap-type: none;
+    user-select: none;
+
+    a,
+    img {
+      pointer-events: none;
+    }
+  }
+}
+
+// La piste fait 100vw : pas de défilement horizontal de la page (barre de
+// défilement verticale sous Windows)
+body:has(.cs_gallery_track) {
+  overflow-x: clip;
+}
+
+.cs_gallery_arrow {
+  display: flex;
+  overflow: hidden;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition:
+    background-color 0.3s ease,
+    color 0.3s ease,
+    opacity 0.3s ease,
+    transform 0.3s ease;
+
+  .w-embed {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 0;
+  }
+
+  svg {
+    display: block;
+  }
+
+  &:hover:not(:disabled) {
+    background-color: #ffffff;
+    color: #0e1225;
+  }
+
+  // Survol : la flèche sort dans son sens et revient par le côté opposé
+  // (mêmes keyframes que le carrousel des cas clients, _cslider.scss)
+  &[data-gallery-next]:hover:not(:disabled) svg {
+    animation: cslider-arrow-next 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  &[data-gallery-prev]:hover:not(:disabled) svg {
+    animation: cslider-arrow-prev 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.92);
+  }
+
+  &:disabled {
+    opacity: 0.35;
+    cursor: default;
+  }
+
+  &:focus-visible {
+    outline: 0.125rem solid $orange;
+    outline-offset: 0.125rem;
+  }
+}
+
+// Rien à faire défiler : pas de flèches
+[data-cs-block].is-static .cs_gallery_nav {
+  display: none;
+}
+
+// --- Mouvement réduit --------------------------------------------------------
+@media (prefers-reduced-motion: reduce) {
+  .cs_play,
+  .cs_play .cs_play_icon,
+  .cs_media_img,
+  .cs_media_veil,
+  .cs_gallery_arrow {
+    transition: none !important;
+  }
+
+  .cs_media.is-loading .cs_play,
+  .cs_gallery_arrow:hover svg {
+    animation: none !important;
+  }
+}
+
+// --- Bento médias (components/bento.js) --------------------------------------
+// Desktop : tailles et proportions posées dans Webflow (cs_bento_row,
+// is-main, is-big / is-mid / is-side, cs_bento_col). Mobile : 2 colonnes,
+// la grande case en pleine largeur.
+@media (max-width: 767px) {
+  .cs_bento {
+    row-gap: 1rem;
+  }
+
+  .cs_bento_row,
+  .cs_bento_row.is-main {
+    height: auto;
+    flex-wrap: wrap;
+    gap: 1rem;
+
+    > *,
+    .cs_bento_col > * {
+      flex: 1 1 calc(50% - 0.5rem);
+      aspect-ratio: 4 / 5;
+    }
+
+    > .is-big {
+      flex-basis: 100%;
+      aspect-ratio: 4 / 3;
+    }
+  }
+
+  .cs_bento_col {
+    display: contents;
+  }
+}

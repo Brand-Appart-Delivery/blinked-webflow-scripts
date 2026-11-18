@@ -1,0 +1,255 @@
+// Méga-menu Services (composant Nav, menu déroulant .navbar9_dropdown).
+//
+// Structure Webflow :
+//   .navbar9_dropdown.w-dropdown-list       liste Webflow (w--open à l'ouverture)
+//     .mega_inner                            panneau blanc visible
+//       .mega_services > .mega_link × 3      lignes SEA / SMA / Programmatique
+//                      > .mega_cases-link    « Tous nos cas d'étude »
+//       .mega_case > .cases_card.is-menu     carte cas client
+//
+// Ouverture / fermeture : Webflow bascule display none/block d'un coup, ce qui
+// empêche toute animation de sortie. Sur desktop, la liste reste en
+// display:block et on joue sur visibility (retardée à la fermeture) : le
+// panneau peut ainsi s'animer dans les deux sens.
+// L'ancien CSS inline (embed Global Styles) anime .navbar9_dropdown en
+// opacity/transform : on le neutralise ici (sélecteur plus précis).
+
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+$ease-in: cubic-bezier(0.4, 0, 1, 1);
+$close-duration: 0.28s;
+
+// --- Liste Webflow : simple support, transparent ---------------------------
+.navbar9_dropdown.w-dropdown-list {
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+  min-width: 0;
+  opacity: 1;
+  transform: none;
+}
+
+@media (min-width: 992px) {
+  // Webflow a un état « Open » (Relume) sur .navbar9_dropdown.w--open :
+  // top 200 %, largeur fixe 24.625rem, fond blanc, padding. Il disparaît d'un
+  // coup à la fermeture et faisait sauter le panneau (une frame de décalage).
+  // On fige ici les MÊMES valeurs ouvert et fermé.
+  .navbar9_dropdown.w-dropdown-list,
+  .navbar9_dropdown.w-dropdown-list.w--open {
+    // Centré sous « Nos services »
+    left: 50%;
+    right: auto;
+    transform: translateX(-50%);
+    top: 150%;
+    width: auto;
+    min-width: 0;
+    max-width: none;
+    padding: 0;
+    border-radius: 0;
+    background: transparent;
+  }
+
+  .navbar9_dropdown.w-dropdown-list {
+    display: block;
+    visibility: hidden;
+    pointer-events: none;
+    // visibility bascule à la FIN de la fermeture, pour laisser l'animation jouer
+    transition: visibility 0s linear $close-duration;
+
+    &.w--open {
+      visibility: visible;
+      pointer-events: auto;
+      transition-delay: 0s;
+    }
+  }
+
+  // Panneau : léger glissé + zoom depuis le coin haut droit (côté bouton)
+  .mega_inner {
+    opacity: 0;
+    transform: translateY(-0.75rem) scale(0.97);
+    transform-origin: 50% 0;
+    transition:
+      opacity $close-duration ease,
+      transform $close-duration $ease-in;
+  }
+
+  .w--open > .mega_inner {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.35s ease,
+      transform 0.6s $ease-out;
+  }
+
+  // Lignes de gauche : cascade à l'ouverture, disparition groupée à la fermeture
+  .mega_services > .mega_link,
+  .mega_services > .mega_cases-link {
+    opacity: 0;
+    transform: translateY(0.5rem);
+    transition:
+      opacity 0.2s ease,
+      transform 0.2s ease,
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  .w--open .mega_services > .mega_link,
+  .w--open .mega_services > .mega_cases-link {
+    opacity: 1;
+    transform: none;
+    transition:
+      opacity 0.45s ease,
+      transform 0.6s $ease-out,
+      background-color 0.3s ease,
+      color 0.3s ease;
+  }
+
+  @for $i from 1 through 6 {
+    .w--open .mega_services > :nth-child(#{$i}) {
+      transition-delay: #{0.06 + $i * 0.05}s, #{0.06 + $i * 0.05}s, 0s, 0s;
+    }
+  }
+
+  // Carte cas client : se dévoile (clip) pendant que l'image dézoome
+  .mega_case .cases_card {
+    clip-path: inset(6% 6% 6% 6% round 1.5rem);
+    opacity: 0;
+    transition:
+      clip-path $close-duration $ease-in,
+      opacity $close-duration ease;
+  }
+
+  .mega_case .cases_card-image {
+    transform: scale(1.08);
+  }
+
+  .w--open .mega_case .cases_card {
+    clip-path: inset(0% 0% 0% 0% round 1.5rem);
+    opacity: 1;
+    transition:
+      clip-path 0.75s $ease-out 0.1s,
+      opacity 0.4s ease 0.1s;
+  }
+
+  .w--open .mega_case .cases_card-image {
+    transform: scale(1);
+    transition: transform 1.1s $ease-out 0.1s;
+  }
+
+  // Survol de la carte : l'image zoome doucement (sans délai d'ouverture)
+  .w--open .mega_case .cases_card:hover .cases_card-image {
+    transform: scale(1.06);
+    transition: transform 0.8s $ease-out;
+  }
+}
+
+// Tablette / mobile : même zoom au survol (pas d'animation d'ouverture ici)
+@media (max-width: 991px) {
+  .mega_case .cases_card:hover .cases_card-image {
+    transform: scale(1.06);
+  }
+}
+
+// --- Lignes service : survol (couleurs de la maquette) ---------------------
+.mega_link {
+  transition: background-color 0.3s ease, color 0.3s ease;
+
+  .services_card_icon,
+  .navbar9_arrow,
+  .mega_title,
+  .text-color-secondary-bg-white {
+    transition: background-color 0.3s ease, color 0.3s ease, opacity 0.3s ease, transform 0.3s ease;
+  }
+
+  &:hover,
+  &:focus-visible {
+    .mega_title,
+    .text-color-secondary-bg-white {
+      color: #ffffff;
+    }
+
+    .services_card_icon {
+      background-color: #f46b50;
+    }
+
+    // Flèche blanche sur le fond orange, avec un léger glissé
+    .navbar9_arrow {
+      color: #ffffff;
+      transform: translateX(0.25rem);
+    }
+  }
+}
+
+// Carte cas client du méga-menu : même flèche animée que sur /realisations.
+.mega_case .cases_card:hover,
+.mega_case .cases_card:focus-within {
+  .footer_submit-arrow {
+    transform: translate(150%, -50%);
+    opacity: 0;
+  }
+
+  .footer_submit-arrow.is-in {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+// --- Séparateur Blog | Prendre rendez-vous --------------------------------
+// Nav sombre : blanc translucide (Webflow). Nav claire : gris (variante
+// Webflow). Nav devenue blanche au scroll (.nav-is-light, script inline) :
+// gris aussi.
+.nav-is-light .navbar9_divider {
+  background-color: #dfe6e7;
+}
+
+// --- Nav blanche au scroll (.nav-is-light, components/nav-scroll.js) --------
+// Mêmes règles que le CSS inline de la home, pour les pages qui ne l'ont pas
+// (template Services…).
+.navbar9_component {
+  transition: background-color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar9_link,
+.navbar9_dropdown-toggle {
+  transition: color 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.navbar9_component.nav-is-light {
+  background-color: #ffffff !important;
+
+  // Logo : blanc en haut de page, couleur au scroll
+  .navbar9_logo.is-dark {
+    display: none;
+  }
+
+  .navbar9_logo.is-light {
+    display: flex;
+    opacity: 1;
+  }
+
+  .navbar9_link,
+  .navbar9_dropdown-toggle {
+    color: #0d1226 !important;
+  }
+
+  .navbar9_link:hover,
+  .navbar9_dropdown-toggle:hover,
+  .navbar9_dropdown-toggle:hover .icon-chevron {
+    color: #f14624 !important;
+  }
+}
+
+body:has(.bg_gradient_hero) .navbar9_component:not(.nav-is-light) .navbar9_logo.is-light,
+body:has([data-dark-hero]) .navbar9_component:not(.nav-is-light) .navbar9_logo.is-light {
+  display: none;
+}
+
+// --- Mouvement réduit : ouverture / fermeture instantanées ------------------
+@media (prefers-reduced-motion: reduce) {
+  .navbar9_dropdown.w-dropdown-list,
+  .mega_inner,
+  .mega_services > *,
+  .mega_case .cases_card,
+  .mega_case .cases_card-image {
+    transition: none !important;
+  }
+}

@@ -1,0 +1,53 @@
+// Footer — compléments au style Webflow (composant « Footer »).
+
+// Texte clair sur fond sombre : sans lissage, macOS l'affiche plus gras
+// que dans Figma. Webflow n'accepte pas cette propriété dans ses styles.
+.footer13_component {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// Rebond élastique sous le footer : voir _base.scss.
+
+// Bouton newsletter : même animation que les boutons flèche du site
+// (.button_7.is-only-arrow). Structure posée dans Webflow :
+//   .footer_submit-wrap            dégradé + flèches
+//     .footer_submit-arrow         flèche visible, sort par la droite au survol
+//     .footer_submit-arrow.is-in   flèche cachée à gauche, arrive au centre
+//     input.footer_submit          zone cliquable transparente par-dessus
+// Le Designer ne gère pas « enfant au survol du parent » : c'est ici.
+
+.footer_submit-wrap:hover,
+.footer_submit-wrap:focus-within {
+  .footer_submit-arrow {
+    transform: translate(150%, -50%);
+    opacity: 0;
+  }
+
+  .footer_submit-arrow.is-in {
+    transform: translate(-50%, -50%);
+    opacity: 1;
+  }
+}
+
+.footer_submit-wrap:active {
+  transform: scale(0.92);
+}
+
+.footer_submit-wrap {
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+// Focus clavier visible (l'input est transparent, on entoure le bloc).
+.footer_submit-wrap:has(.footer_submit:focus-visible),
+.footer_input:focus-visible {
+  outline: 0.125rem solid #f14624;
+  outline-offset: 0.125rem;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .footer_submit-arrow,
+  .footer_submit-wrap {
+    transition: none;
+  }
+}
