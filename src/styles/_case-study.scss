@@ -273,3 +273,12 @@ body:has(.cs_gallery_track) {
     display: contents;
   }
 }
+
+// Champs CMS vides de la carte « Résultat clé » et du hero : ligne ou bouton
+// masqué plutôt qu'une étiquette sans valeur (ex. Durée non renseignée).
+.cs_result_row:has(.svc_info_value.w-dyn-bind-empty),
+.cs_result_value.w-dyn-bind-empty,
+.cs_result .svc_card_text.w-dyn-bind-empty,
+.svc_hero_buttons .svc_button_outline:has(> .w-dyn-bind-empty) {
+  display: none;
+}

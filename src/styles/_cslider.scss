@@ -73,6 +73,23 @@ $duration: 0.65s;
   transform: scale(hover-zoom(560)); // carte active du carrousel
 }
 
+// Survol des cartes fermées (souris seulement) : zoom de l'image dans le
+// même ratio que la carte active, cartouche logo qui grossit un peu.
+@media (hover: hover) and (pointer: fine) {
+  [data-cslider] .cslider_card:not(.is-active) {
+    cursor: pointer;
+  }
+
+  [data-cslider] .cslider_card:not(.is-active):hover .cslider_image {
+    transform: scale(hover-zoom(260)); // carte fermée du carrousel
+  }
+
+  [data-cslider] .cslider_card:not(.is-active):hover .cslider_logo {
+    transform: translate(-50%, -50%) scale(1.06);
+    box-shadow: 0 0.75rem 2rem rgba(14, 18, 37, 0.18);
+  }
+}
+
 // Voile : léger sur les cartes fermées, bleu nuit dégradé sur la carte active
 [data-cslider] .cslider_veil {
   position: absolute;
@@ -105,7 +122,10 @@ $duration: 0.65s;
   top: 50%;
   transform: translate(-50%, -50%);
   max-width: calc(var(--cs-small) - 2rem);
-  transition: opacity 0.3s ease 0.25s;
+  transition:
+    opacity 0.3s ease 0.25s,
+    transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 0.6s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 [data-cslider] .is-active .cslider_logo {
