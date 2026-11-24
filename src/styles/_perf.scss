@@ -1,0 +1,40 @@
+// src/styles/_perf.scss — fluidité du scroll (Lenis), surtout sur la home.
+//
+// 1. Hauteurs réservées : une image en lazy-load sans hauteur fait grandir sa
+//    section quand elle arrive, en plein scroll (Lenis recalcule la page,
+//    ça saccade). On donne leur ratio aux images concernées.
+// 2. Halos SVG floutés (embeds Webflow exportés de Figma, filtre
+//    feGaussianBlur jusqu'à 1560 px) : un flou SVG est calculé par le
+//    processeur et peut être redessiné pendant le scroll. On les met sur
+//    leur propre calque : dessinés une fois, puis seulement déplacés.
+
+// --- 1. Hauteurs réservées --------------------------------------------------
+
+// Section Groupe Jaws (composant « Section - Groupe ») : 520 → 771 px au
+// chargement des logos sans cette règle.
+.groupe_grid_img {
+  aspect-ratio: 1 / 1;
+  height: auto;
+
+  &.is_smaller {
+    aspect-ratio: 568 / 193; // logo Jaws en largeur
+  }
+}
+
+// Fiches service, section bénéfices (.svc_light) : 3 illustrations CMS en
+// 642 × 522, la section passait de 679 à 928 px à leur arrivée.
+.svc_benefit_img {
+  aspect-ratio: 642 / 522;
+  height: auto;
+}
+
+// --- 2. Halos décoratifs sur leur propre calque ----------------------------
+
+.bg_gradient_round-left,
+.bg_gradient_round-right,
+.chiffres-cle_bg_bottom {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: paint;
+  pointer-events: none;
+}

@@ -70,6 +70,11 @@
 />
 
 <script>
+  /* Rechargement : toujours repartir du haut de la page (sauf URL avec #ancre). */
+  if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+</script>
+
+<script>
   (function () {
     const FORCE_PROD = false;
 

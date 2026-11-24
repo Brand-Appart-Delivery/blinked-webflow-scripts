@@ -11,7 +11,8 @@
     .temoignages_block,
     .blog34_item-link,
     .groupe_grid_block,
-    .processus_layout_card {
+    .processus_layout_card,
+    [data-cases-card] {
       opacity: 0;
       transform: translateY(30px);
       will-change: transform, opacity;

@@ -21,6 +21,7 @@ const SELECTORS = [
   ".confiance_logo_block",
   ".faq6_question",
   ".processus_layout_card",
+  "[data-cases-card]", // cartes de la page Réalisations (pas celle du méga-menu)
 ];
 
 export function initCardsReveal(root = document) {
@@ -46,6 +47,10 @@ export function initCardsReveal(root = document) {
           stagger: 0.15,
           ease: "power3.out",
           overwrite: true,
+          // Fin de l'apparition : on libère le calque réservé par le
+          // will-change du CSS (sinon chaque carte garde son calque et alourdit
+          // tout le scroll de la page).
+          onComplete: () => batch.forEach((el) => (el.style.willChange = "auto")),
         }),
       start: "top 85%",
       once: true,

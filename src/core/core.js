@@ -2,6 +2,7 @@
 import { requestScrollRefresh } from "../utils/scroll-refresh.js";
 import { prefersReducedMotion } from "../utils/motion.js";
 import { initOverscroll } from "./overscroll.js";
+import { initPageLoad } from "./page-load.js";
 import { loadScript, loadStyle } from "../utils/load-asset.js";
 
 // false = scroll natif. true = Lenis (le script Lenis doit être chargé dans Webflow).
@@ -161,6 +162,7 @@ export function getLenis() {
 }
 
 export function initCore() {
+  initPageLoad(); // retour en haut au rechargement + images sans lazy-load
   // Enregistrement unique de ScrollTrigger, partagé par tous les modules.
   if (typeof window.gsap !== "undefined" && typeof window.ScrollTrigger !== "undefined") {
     window.gsap.registerPlugin(window.ScrollTrigger);

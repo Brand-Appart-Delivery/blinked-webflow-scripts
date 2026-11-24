@@ -77,6 +77,16 @@ $arrow-ease: cubic-bezier(0.23, 1, 0.32, 1);
   outline-offset: 0.25rem;
 }
 
+// Panneau des chiffres : caché au départ, il apparaît après la carte
+// (animations/home-cases.js). Seulement si le JS tourne et si les
+// animations sont acceptées.
+@media (prefers-reduced-motion: no-preference) {
+  html.w-mod-js .home-case_kpis {
+    opacity: 0;
+    transform: translateY(40px);
+  }
+}
+
 // Description : 2 lignes max (le texte CMS est parfois long)
 .home-case_desc {
   display: -webkit-box;
@@ -92,6 +102,26 @@ $arrow-ease: cubic-bezier(0.23, 1, 0.32, 1);
 // Chiffre vide dans le CMS : bloc masqué
 .home-case_kpi:has(.home-case_kpi-value.w-dyn-bind-empty) {
   display: none;
+}
+
+// Espace entre la liste des cartes et le bouton « Découvrir tous nos case
+// studies » (le conteneur Webflow n'a qu'un gap de 2rem).
+.section_case-study .swiper.is-cs {
+  margin-bottom: 2.5rem;
+
+  @media screen and (max-width: 991px) {
+    margin-bottom: 0.5rem; // en mobile, les flèches du slider sont entre les deux
+  }
+}
+
+// Voile devant la photo (maquette Figma « Projet / Carte hero ») : bleu nuit
+// côté texte (78 %) qui s'éclaircit vers l'image (35 % puis 20 %), plus un
+// fondu sombre en bas. Même valeur que la classe Webflow, gardée ici pour
+// passer devant en cas d'écart.
+.section_case-study .home-case_shade {
+  background-image:
+    linear-gradient(180deg, rgba(13, 18, 38, 0) 45%, rgba(13, 18, 38, 0.55) 100%),
+    linear-gradient(90deg, rgba(29, 40, 84, 0.78) 0.8%, rgba(29, 40, 84, 0.35) 62%, rgba(29, 40, 84, 0.2) 100%);
 }
 
 // --- Alternance : une carte sur deux en miroir (desktop) ---------------------
@@ -115,7 +145,7 @@ $arrow-ease: cubic-bezier(0.23, 1, 0.32, 1);
     .home-case_shade {
       background-image:
         linear-gradient(180deg, rgba(13, 18, 38, 0) 45%, rgba(13, 18, 38, 0.55) 100%),
-        linear-gradient(270deg, rgba(13, 18, 38, 0.92) 0%, rgba(13, 18, 38, 0.78) 35%, rgba(29, 40, 84, 0.35) 62%, rgba(29, 40, 84, 0.2) 100%);
+        linear-gradient(270deg, rgba(29, 40, 84, 0.78) 0.8%, rgba(29, 40, 84, 0.35) 62%, rgba(29, 40, 84, 0.2) 100%);
     }
   }
 }

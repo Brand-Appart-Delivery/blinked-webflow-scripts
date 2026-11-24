@@ -68,6 +68,9 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 
   // Le bouton suit la souris (magnetic.js) : le survol agit sur l'icône
   .cs_play_icon {
+    // Le SVG décale déjà le triangle à droite (recentrage optique) : la marge
+    // gauche posée dans Webflow le décalait une seconde fois.
+    margin-left: 0;
     transition: transform 0.4s $ease-out;
   }
 

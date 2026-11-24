@@ -28,6 +28,7 @@ import { initImageReveal } from "./animations/image-reveal.js";
 import { initParallax, initStoryParallax } from "./animations/parallax.js";
 import { initRowsReveal } from "./animations/rows-reveal.js";
 import { initFooterLogo } from "./animations/footer-logo.js";
+import { initHomeCases } from "./animations/home-cases.js";
 import { initTestimonialsSticky } from "./sections/testimonials-sticky.js";
 
 onReady(() => {
@@ -57,6 +58,7 @@ onReady(() => {
   initStoryParallax();
   initRowsReveal();
   initFooterLogo();
+  initHomeCases();
   initTestimonialsSticky();
 });
 

@@ -55,6 +55,28 @@
   }
 }
 
+// Logo client en haut à gauche de la carte (champ CMS « Logo client »,
+// image .cases_card-logo dans .cases_card-titles) : passé en blanc
+// monochrome, quelles que soient ses couleurs. Il remplace le petit nom du
+// client ; sans logo dans le CMS, le nom reste affiché.
+.cases_card-logo {
+  display: block;
+  width: auto;
+  max-width: 9rem;
+  height: 1.75rem;
+  object-fit: contain;
+  object-position: left center;
+  filter: brightness(0) invert(1);
+
+  &.w-dyn-bind-empty {
+    display: none;
+  }
+}
+
+.cases_card-titles:has(.cases_card-logo:not(.w-dyn-bind-empty)) .cases_card-client {
+  display: none;
+}
+
 // Survol : flèche qui part à droite / revient par la gauche (comme les
 // boutons flèche du site) et léger zoom de l'image.
 .cases_card:hover,
