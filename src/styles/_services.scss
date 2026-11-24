@@ -23,6 +23,14 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   -webkit-text-fill-color: transparent;
 }
 
+// Le span est en Newsreader (autres métriques que Golos) : avec sa propre
+// hauteur de ligne, il agrandissait la ligne de ~9 px au moment où le JS le
+// pose, et tout le hero sautait. line-height 0 : la ligne garde la hauteur
+// du titre, le texte s'affiche pareil.
+[data-title-accent] .hero_title-accent {
+  line-height: 0;
+}
+
 // Bouton contour : se remplit au survol
 .svc_button_outline {
   transition:
@@ -180,6 +188,8 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
 }
 
 // --- Tablette -------------------------------------------------------------------
+// Les règles du hero (.svc_hero, .svc_hero_title, .svc_hero_curve) sont aussi
+// dans le head code Webflow : sinon le hero mobile se recompose au load.
 @media (max-width: 991px) {
   .main-wrapper .svc_hero {
     grid-template-columns: 1fr;
@@ -266,4 +276,27 @@ $ease-out: cubic-bezier(0.16, 1, 0.3, 1);
   .svc_exp_card:hover .svc_exp_illu {
     transform: none;
   }
+}
+
+// Hero des fiches service : les courbes orange (.svc_hero_curve) dépassent
+// sous le hero, vers le bandeau de logos. Le hero ne doit pas les couper ;
+// le parent .bg_gradient_hero (overflow hidden) empêche toujours le
+// débordement à droite (pas de scroll horizontal).
+.section_hero:has(.svc_hero_curve) {
+  overflow: visible;
+  // Espace entre la carte « Notre lecture » et le bandeau de logos (maquette).
+  // Même règle dans le head code Webflow, sinon le hero grandit au load.
+  padding-bottom: 7rem;
+
+  @media (max-width: 991px) {
+    padding-bottom: 4.5rem;
+  }
+
+  @media (max-width: 767px) {
+    padding-bottom: 3rem;
+  }
+}
+
+.svc_hero_curve {
+  pointer-events: none;
 }

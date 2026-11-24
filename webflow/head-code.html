@@ -1,21 +1,4 @@
-<!--
-  Webflow → Site settings → Custom code → HEAD CODE (tout remplacer par ce fichier)
-  Scripts Blinked — github.com/Brand-Appart-Delivery/blinked-webflow-scripts
-  Charge main.css et prépare main.js pour le footer (window.__blinked).
-
-  - Production : lit version.json sur GitHub (sans cache) puis charge
-    jsDelivr @<version> : nouvelle adresse à chaque deploy. Repli sur @main.
-  - Staging (*.webflow.io, localhost) avec FORCE_PROD = false : serveur de dev
-    (npm run dev), avec rechargement auto. Le tunnel dev.michelaxel.fr sert
-    aussi les autres clients : on vérifie que c'est bien le dev de CE projet
-    (nom du package.json), sinon code de production.
--->
-
-<!-- Masqué jusqu'au passage du JS (évite les sauts au load, main.css arrive
-     après le premier rendu). Repli : visible après 3 s si le JS ne passe pas. -->
 <style>
-  /* Golos Text déclarée ici (même fichier que Google Fonts) : sans attendre
-     le script WebFont de Webflow, qui l'ajoute tard et fait sauter le hero. */
   @font-face {
     font-family: 'Golos Text';
     font-style: normal;
@@ -35,9 +18,6 @@
       opacity: 1;
     }
   }
-  /* Chiffres des fiches cas client (« +140% ») : cachés tant que le JS n'a
-     pas mis l'unité en petit (sinon flash du % en grand). visibility plutôt
-     qu'opacity pour ne pas gêner les animations GSAP. */
   [data-cs-figure]:not([data-cs-figure-ready]) {
     visibility: hidden;
     animation: blinked-cloak-v 0s 3s forwards;
@@ -48,8 +28,13 @@
     }
   }
 
-  /* Cartes du hero (« Résultat clé », « Notre lecture ») : apparition au
-     load, montée + fondu. translate pour ne pas gêner le parallax GSAP. */
+  .cs_result_row:has(.svc_info_value.w-dyn-bind-empty),
+  .cs_result_value.w-dyn-bind-empty,
+  .cs_result .svc_card_text.w-dyn-bind-empty,
+  .svc_hero_buttons .svc_button_outline:has(> .w-dyn-bind-empty) {
+    display: none;
+  }
+
   @media (prefers-reduced-motion: no-preference) {
     .cs_result,
     .svc_hero_card {
@@ -67,24 +52,44 @@
     }
   }
 
-  /* Bandeau de logos : hauteur réservée avant le chargement des images
-     (= hauteur max d'un logo), sinon le hero grandit au load. */
+  .section_hero:has(.svc_hero_curve) {
+    overflow: visible;
+    padding-bottom: 7rem;
+  }
+  @media screen and (max-width: 991px) {
+    .section_hero:has(.svc_hero_curve) {
+      padding-bottom: 4.5rem;
+    }
+    .main-wrapper .svc_hero {
+      grid-template-columns: 1fr;
+    }
+    .main-wrapper .svc_hero_title {
+      font-size: 3rem;
+    }
+    .main-wrapper .svc_hero_curve {
+      display: none;
+    }
+  }
+  @media screen and (max-width: 767px) {
+    .section_hero:has(.svc_hero_curve) {
+      padding-bottom: 3rem;
+    }
+    .main-wrapper .svc_hero_title {
+      font-size: 2.5rem;
+    }
+  }
+
   .logo3_wrapper {
     min-height: 3.5rem;
+    align-items: center;
   }
   @media screen and (max-width: 767px) {
     .logo3_wrapper {
-      min-height: 4.5rem; /* 3rem de logo + 2 × 0,75rem de padding */
+      min-height: 4.5rem;
     }
   }
 </style>
 
-<!-- Polices demandées tout de suite (sinon le titre du hero se recompose
-     quand elles arrivent) :
-     - Golos Text : chargée tard par le script WebFont de Webflow. Un seul
-       fichier latin pour toutes les graisses (version v7 de Google Fonts).
-     - Newsreader italique (accent des titres) : sinon le navigateur ne la
-       demande qu'à l'affichage du titre. -->
 <link
   rel="preload"
   as="font"
@@ -101,7 +106,6 @@
 />
 
 <script>
-  /* Rechargement : toujours repartir du haut de la page (sauf URL avec #ancre). */
   if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
 </script>
 
@@ -109,7 +113,7 @@
   (function () {
     const FORCE_PROD = false;
 
-    const PROJECT = 'blinked'; // « name » du package.json
+    const PROJECT = 'blinked';
     const REPO = 'Brand-Appart-Delivery/blinked-webflow-scripts';
     const DEV_ORIGINS = ['http://localhost:3000', 'https://dev.michelaxel.fr'];
     const VERSION_URL = 'https://raw.githubusercontent.com/' + REPO + '/main/version.json';
@@ -128,7 +132,6 @@
         .finally(function () { clearTimeout(timer); });
     }
 
-    // Serveur de dev de CE projet uniquement (comparaison du nom du package.json)
     async function findDevOrigin() {
       if (FORCE_PROD || !isStaging) return null;
       for (const origin of DEV_ORIGINS) {
@@ -166,16 +169,11 @@
   })();
 </script>
 
-<!-- Swiper (components/sliders.js : équipe, études de cas) -->
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
 <script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
 
-<!-- Finsweet Attributes -->
 <script async type="module" src="https://cdn.jsdelivr.net/npm/@finsweet/attributes@2/attributes.js" fs-list></script>
 
-<!-- Lenis : plus chargé ici, main.js charge sa propre version (core/core.js). -->
-
-<!-- Google tag (gtag.js) -->
 <script async src="https://www.googletagmanager.com/gtag/js?id=G-3HKFGT9CSQ"></script>
 <script>
   window.dataLayer = window.dataLayer || [];

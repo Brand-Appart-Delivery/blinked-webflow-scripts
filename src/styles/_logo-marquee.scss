@@ -12,8 +12,10 @@
 
 // Hauteur réservée avant le chargement des logos (= hauteur max d'un logo),
 // sinon le hero grandit au load. Même règle dans le head code Webflow.
+// Logos centrés dans cette hauteur (sinon collés en haut).
 .logo3_wrapper {
   min-height: 3.5rem;
+  align-items: center;
 
   @media screen and (max-width: 767px) {
     min-height: 4.5rem; // 3rem de logo + 2 × 0,75rem de padding
