@@ -35,6 +35,37 @@
       opacity: 1;
     }
   }
+  /* Chiffres des fiches cas client (« +140% ») : cachés tant que le JS n'a
+     pas mis l'unité en petit (sinon flash du % en grand). visibility plutôt
+     qu'opacity pour ne pas gêner les animations GSAP. */
+  [data-cs-figure]:not([data-cs-figure-ready]) {
+    visibility: hidden;
+    animation: blinked-cloak-v 0s 3s forwards;
+  }
+  @keyframes blinked-cloak-v {
+    to {
+      visibility: visible;
+    }
+  }
+
+  /* Cartes du hero (« Résultat clé », « Notre lecture ») : apparition au
+     load, montée + fondu. translate pour ne pas gêner le parallax GSAP. */
+  @media (prefers-reduced-motion: no-preference) {
+    .cs_result,
+    .svc_hero_card {
+      animation: hero-card-in 1.2s cubic-bezier(0.16, 1, 0.3, 1) 0.4s both;
+    }
+  }
+  @keyframes hero-card-in {
+    from {
+      opacity: 0;
+      translate: 0 2.5rem;
+    }
+    to {
+      opacity: 1;
+      translate: 0 0;
+    }
+  }
 
   /* Bandeau de logos : hauteur réservée avant le chargement des images
      (= hauteur max d'un logo), sinon le hero grandit au load. */
