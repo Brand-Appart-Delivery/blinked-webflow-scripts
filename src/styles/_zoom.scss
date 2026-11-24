@@ -1,0 +1,12 @@
+// src/styles/_zoom.scss — zoom de l'image au survol des cartes.
+// Un même scale() agrandit beaucoup plus une grande carte qu'une petite
+// (1.04 = +14 px sur 350 px, mais +51 px sur 1280 px). On vise donc le même
+// agrandissement en pixels partout : scale = 1 + $grow / largeur de la carte.
+
+@use "sass:math";
+
+$grow: 14; // px gagnés en largeur au survol, identique pour toutes les cartes
+
+@function hover-zoom($card-width) {
+  @return 1 + math.div($grow, $card-width);
+}

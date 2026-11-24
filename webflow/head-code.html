@@ -1,17 +1,79 @@
 <!--
-  Webflow → Site settings → Custom code → HEAD CODE
-  Charge main.css (et prépare main.js pour le footer).
+  Webflow → Site settings → Custom code → HEAD CODE (tout remplacer par ce fichier)
+  Scripts Blinked — github.com/Brand-Appart-Delivery/blinked-webflow-scripts
+  Charge main.css et prépare main.js pour le footer (window.__blinked).
 
   - Production : lit version.json sur GitHub (sans cache) puis charge
-    jsDelivr @<version> : nouvelle adresse à chaque deploy, jamais d'ancien
-    fichier en cache. Repli sur @main si version.json ne répond pas.
-  - Staging (*.webflow.io) avec FORCE_PROD = false : essaie le serveur local
-    puis le tunnel (npm run dev), avec rechargement automatique.
+    jsDelivr @<version> : nouvelle adresse à chaque deploy. Repli sur @main.
+  - Staging (*.webflow.io, localhost) avec FORCE_PROD = false : serveur de dev
+    (npm run dev), avec rechargement auto. Le tunnel dev.michelaxel.fr sert
+    aussi les autres clients : on vérifie que c'est bien le dev de CE projet
+    (nom du package.json), sinon code de production.
 -->
+
+<!-- Masqué jusqu'au passage du JS (évite les sauts au load, main.css arrive
+     après le premier rendu). Repli : visible après 3 s si le JS ne passe pas. -->
+<style>
+  /* Golos Text déclarée ici (même fichier que Google Fonts) : sans attendre
+     le script WebFont de Webflow, qui l'ajoute tard et fait sauter le hero. */
+  @font-face {
+    font-family: 'Golos Text';
+    font-style: normal;
+    font-weight: 300 700;
+    font-display: swap;
+    src: url(https://fonts.gstatic.com/s/golostext/v7/q5uCsoe9Lv5t7Meb31EcExN8hK5SAMo.woff2) format('woff2');
+    unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+  }
+
+  [data-cases-filters]:not(.is-ready),
+  [data-title-accent]:not([data-title-accent-ready]) {
+    opacity: 0;
+    animation: blinked-cloak 0s 3s forwards;
+  }
+  @keyframes blinked-cloak {
+    to {
+      opacity: 1;
+    }
+  }
+
+  /* Bandeau de logos : hauteur réservée avant le chargement des images
+     (= hauteur max d'un logo), sinon le hero grandit au load. */
+  .logo3_wrapper {
+    min-height: 3.5rem;
+  }
+  @media screen and (max-width: 767px) {
+    .logo3_wrapper {
+      min-height: 4.5rem; /* 3rem de logo + 2 × 0,75rem de padding */
+    }
+  }
+</style>
+
+<!-- Polices demandées tout de suite (sinon le titre du hero se recompose
+     quand elles arrivent) :
+     - Golos Text : chargée tard par le script WebFont de Webflow. Un seul
+       fichier latin pour toutes les graisses (version v7 de Google Fonts).
+     - Newsreader italique (accent des titres) : sinon le navigateur ne la
+       demande qu'à l'affichage du titre. -->
+<link
+  rel="preload"
+  as="font"
+  type="font/woff2"
+  crossorigin
+  href="https://fonts.gstatic.com/s/golostext/v7/q5uCsoe9Lv5t7Meb31EcExN8hK5SAMo.woff2"
+/>
+<link
+  rel="preload"
+  as="font"
+  type="font/ttf"
+  crossorigin
+  href="https://cdn.prod.website-files.com/6979ce915767387cd0f9aa37/6afc8747fec048db1b606d79_Newsreader-Italic-VariableFont_opsz%2Cwght.ttf"
+/>
+
 <script>
   (function () {
     const FORCE_PROD = false;
 
+    const PROJECT = 'blinked'; // « name » du package.json
     const REPO = 'Brand-Appart-Delivery/blinked-webflow-scripts';
     const DEV_ORIGINS = ['http://localhost:3000', 'https://dev.michelaxel.fr'];
     const VERSION_URL = 'https://raw.githubusercontent.com/' + REPO + '/main/version.json';
@@ -30,12 +92,15 @@
         .finally(function () { clearTimeout(timer); });
     }
 
+    // Serveur de dev de CE projet uniquement (comparaison du nom du package.json)
     async function findDevOrigin() {
       if (FORCE_PROD || !isStaging) return null;
       for (const origin of DEV_ORIGINS) {
         try {
-          await fetch(origin + '/main.css', { method: 'HEAD' });
-          return origin;
+          const r = await fetch(origin + '/package.json', { cache: 'no-store' });
+          const pkg = r.ok ? await r.json() : null;
+          if (pkg && pkg.name === PROJECT) return origin;
+          console.warn('[Blinked] Serveur de dev ignoré (' + origin + ') : projet ' + (pkg && pkg.name));
         } catch (e) {}
       }
       return null;
@@ -63,4 +128,23 @@
       }
     });
   })();
+</script>
+
+<!-- Swiper (components/sliders.js : équipe, études de cas) -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/swiper@12/swiper-bundle.min.js"></script>
+
+<!-- Finsweet Attributes -->
+<script async type="module" src="https://cdn.jsdelivr.net/npm/@finsweet/attributes@2/attributes.js" fs-list></script>
+
+<!-- Lenis : plus chargé ici, main.js charge sa propre version (core/core.js). -->
+
+<!-- Google tag (gtag.js) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-3HKFGT9CSQ"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-3HKFGT9CSQ');
 </script>

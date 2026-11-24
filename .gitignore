@@ -6,7 +6,34 @@ src/assets
 .DS_Store
 Icon?
 
-# Sauvegardes CMS : contenu client (brouillons compris), gardées en local
-# seulement (le dépôt est public, jsDelivr)
+# Éditeurs
+.vscode/
+.idea/
+*.swp
+
+# Secrets et configuration locale (le dépôt est PUBLIC : jsDelivr le sert)
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.p12
+credentials*.json
+*-credentials.json
+secrets.*
+*.secret
+.npmrc
+.claude/settings.local.json
+.claude/*.local.*
+
+# Logs et fichiers temporaires
+*.log
+npm-debug.log*
+tmp/
+.cache/
+
+# Sauvegardes CMS et exports Webflow : contenu client (brouillons compris),
+# gardés en local seulement
 backups/cms-backup-*.json
 backups/webflow-*.md
+backups/*.csv

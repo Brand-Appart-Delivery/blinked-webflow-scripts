@@ -1,0 +1,181 @@
+// Home, section « Nos succès » : cartes cas client (.home-case_*).
+// Maquette Figma « Projet / Carte hero » (fond photo, voile bleu nuit,
+// pastille secteur, titre, chiffres clés dans un panneau translucide).
+//
+// Styles de base posés dans Webflow (classes home-case_*). Ici : ce que le
+// Designer ne sait pas faire :
+//   - alternance gauche / droite une carte sur deux (texte et chiffres en
+//     miroir, dégradé inversé) ;
+//   - image dédiée aux cartes en miroir (champ « Image carte paysage inversée ») ;
+//   - chiffre vide du CMS masqué ;
+//   - survol, description limitée à 2 lignes, version mobile.
+
+@use "zoom" as *;
+
+$dark: rgba(13, 18, 38, 1);
+$ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+
+.home-case {
+  transition: transform 0.6s $ease-out;
+}
+
+// Survol : léger zoom de la photo
+.home-case_image,
+.home-case_image-reverse {
+  transition: transform 1.2s $ease-out;
+}
+
+// Bouton : pastille orange avec la flèche seule (styles dans Webflow), même
+// comportement que le bouton flèche des cartes du blog (.button_7.is-only-arrow) :
+// au survol de la carte, la flèche sort par la droite et revient par la gauche ;
+// au clic, le bouton se tasse.
+$arrow-ease: cubic-bezier(0.23, 1, 0.32, 1);
+
+.home-case_button {
+  overflow: hidden;
+  transition: transform 0.6s $arrow-ease;
+}
+
+.home-case:hover .home-case_arrow,
+.home-case:focus-visible .home-case_arrow {
+  animation: home-case-arrow 0.6s $arrow-ease;
+}
+
+.home-case:active .home-case_button {
+  transform: scale(0.92);
+}
+
+@keyframes home-case-arrow {
+  0% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+  45% {
+    transform: translateX(150%);
+    opacity: 0;
+  }
+  46% {
+    transform: translateX(-200%);
+    opacity: 0;
+  }
+  100% {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+
+.home-case:hover,
+.home-case:focus-visible {
+  .home-case_image,
+  .home-case_image-reverse {
+    transform: scale(hover-zoom(1280)); // carte pleine largeur
+  }
+}
+
+.home-case:focus-visible {
+  outline: 0.125rem solid #f14624;
+  outline-offset: 0.25rem;
+}
+
+// Description : 2 lignes max (le texte CMS est parfois long)
+.home-case_desc {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+// Secteur vide dans le CMS : Webflow masque le texte (.w-dyn-bind-empty) et
+// son point orange avec lui (::before de .home-case_sector, posé dans Webflow) ;
+// la pastille garde seulement « Case study ».
+
+// Chiffre vide dans le CMS : bloc masqué
+.home-case_kpi:has(.home-case_kpi-value.w-dyn-bind-empty) {
+  display: none;
+}
+
+// --- Alternance : une carte sur deux en miroir (desktop) ---------------------
+@media screen and (min-width: 992px) {
+  .section_case-study .w-dyn-item:nth-child(even) {
+    .home-case {
+      flex-direction: row-reverse;
+    }
+
+    // Image dédiée aux cartes en miroir (champ CMS « Image carte paysage
+    // inversée ») : affichée à la place de l'image paysage si elle est remplie.
+    // Vide (.w-dyn-bind-empty) : on garde l'image paysage normale.
+    .home-case_image-reverse:not(.w-dyn-bind-empty) {
+      display: block;
+    }
+
+    .home-case:has(.home-case_image-reverse:not(.w-dyn-bind-empty)) .home-case_image {
+      display: none;
+    }
+
+    .home-case_shade {
+      background-image:
+        linear-gradient(180deg, rgba(13, 18, 38, 0) 45%, rgba(13, 18, 38, 0.55) 100%),
+        linear-gradient(270deg, rgba(13, 18, 38, 0.92) 0%, rgba(13, 18, 38, 0.78) 35%, rgba(29, 40, 84, 0.35) 62%, rgba(29, 40, 84, 0.2) 100%);
+    }
+  }
+}
+
+// --- Tablette / mobile : tout empilé, voile du bas renforcé -------------------
+@media screen and (max-width: 991px) {
+  // Slider : les cartes voisines débordent jusqu'au bord de l'écran. Swiper
+  // coupe sur son conteneur (overflow hidden) : on coupe plutôt sur la section.
+  .section_case-study {
+    overflow-x: hidden; // repli
+    overflow-x: clip; // ne crée pas de conteneur de scroll (sticky, Lenis)
+  }
+
+  .section_case-study .swiper.is-cs {
+    overflow: visible;
+  }
+
+  .home-case {
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-end;
+    grid-row-gap: 2rem;
+    min-height: 32rem;
+    height: 100%; // même hauteur pour toutes les slides
+    padding: 2rem;
+  }
+
+  .home-case_shade {
+    background-image: linear-gradient(180deg, rgba(13, 18, 38, 0.35) 0%, rgba(13, 18, 38, 0.75) 45%, rgba(13, 18, 38, 0.95) 100%);
+  }
+
+  .home-case_title {
+    font-size: 2rem;
+  }
+
+  .home-case_kpis {
+    align-self: stretch;
+    flex-wrap: wrap;
+  }
+}
+
+@media screen and (max-width: 479px) {
+  .home-case {
+    padding: 1.5rem;
+  }
+
+  .home-case_title {
+    font-size: 1.75rem;
+  }
+
+  .home-case_kpi-value {
+    font-size: 1.75rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .home-case_image,
+  .home-case_image-reverse,
+  .home-case_arrow {
+    transition: none;
+    animation: none !important;
+  }
+}

@@ -57,7 +57,7 @@ function initCaseStudies(root) {
 
   new window.Swiper(el, {
     slidesPerView: 1,
-    spaceBetween: 0,
+    spaceBetween: 16, // les slides voisines débordent (CSS) : un écart entre elles
     loop: true,
     autoHeight: false, // le CSS impose une hauteur uniforme
     navigation: {

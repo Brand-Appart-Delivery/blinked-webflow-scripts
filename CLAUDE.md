@@ -52,6 +52,8 @@ Toujours répondre à Axel en français. Commentaires de code en français, simp
 
 - Site Webflow : `Blinked` (id `6979ce915767387cd0f9aa37`), staging `blinkedxmekaa.webflow.io`,
   production `www.blinked.fr`. Ancien code Slater archivé dans `backups/slater/`.
+- Connecteur dédié au projet : serveur `webflow-blinked` dans `.mcp.json` (OAuth, autorisé
+  sur le seul site Blinked). L'utiliser plutôt que le connecteur claude.ai global.
 
 - Toute correction de contenu s'applique à toutes les langues du site (FR **et** EN),
   y compris les champs cachés (ex. `markdown`) et les collections en double.

@@ -10,6 +10,8 @@
 //         .w-dyn-items                      piste (déplacée en translateX)
 //           .w-dyn-item > .cslider_card[data-cslider-card]
 //             a[data-cslider-link]          bouton « Découvrir » (fiche)
+//             a.cslider_overlay             ajouté par le JS : lien transparent
+//                                           devant toute la carte (même adresse)
 //     button[data-cslider-prev] / button[data-cslider-next]
 //
 // Les états sont des classes : .is-active (carte centrale), .is-near
@@ -56,6 +58,22 @@ function setupSlider(section) {
     prevBtn?.setAttribute("hidden", "");
     nextBtn?.setAttribute("hidden", "");
   }
+
+  // Toute la carte est cliquable : un lien transparent posé devant, avec
+  // l'adresse du bouton « Découvrir ». Caché aux lecteurs d'écran et hors
+  // tabulation (le bouton reste la cible clavier). Ajouté avant les copies.
+  originals.forEach((item) => {
+    const card = item.querySelector("[data-cslider-card]") || item;
+    const link = card.querySelector("[data-cslider-link]");
+    if (!link || card.querySelector(".cslider_overlay")) return;
+    const overlay = document.createElement("a");
+    overlay.className = "cslider_overlay";
+    overlay.href = link.getAttribute("href") || "#";
+    if (link.target) overlay.target = link.target;
+    overlay.setAttribute("aria-hidden", "true");
+    overlay.tabIndex = -1;
+    card.appendChild(overlay);
+  });
 
   // Copies avant / après pour la boucle : [copies][originaux][copies].
   // Assez de copies de chaque côté (au moins MIN_BUFFER cartes) pour qu'un
@@ -109,7 +127,7 @@ function setupSlider(section) {
       card.classList.toggle("is-active", active);
       card.classList.toggle("is-near", Math.abs(i - index) === 1);
       // Seul le bouton de la carte active est atteignable au clavier.
-      card.querySelectorAll("a, button").forEach((el) => {
+      card.querySelectorAll("a:not(.cslider_overlay), button").forEach((el) => {
         if (active && !items[i].hasAttribute("data-cslider-clone")) el.removeAttribute("tabindex");
         else el.setAttribute("tabindex", "-1");
       });
@@ -155,8 +173,8 @@ function setupSlider(section) {
   prevBtn?.addEventListener("click", () => goTo(index - 1));
   nextBtn?.addEventListener("click", () => goTo(index + 1));
 
-  // Clic sur une carte voisine : elle devient active.
-  // Clic sur la carte active (hors bouton) : ouvre la fiche.
+  // Clic sur une carte non active : elle devient active (sans ouvrir).
+  // Clic sur la carte active : le lien posé devant ouvre la fiche.
   let swiped = false;
   cards.forEach((card, i) => {
     card.addEventListener("click", (e) => {

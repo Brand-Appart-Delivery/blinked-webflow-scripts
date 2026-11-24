@@ -14,7 +14,7 @@ import { prefersReducedMotion } from "../utils/motion.js";
 const SELECTORS = [
   ".services_card",
   ".chiffre-cle_block_bloc",
-  ".case-studies_block",
+  ".home-case",
   ".temoignages_block",
   ".blog34_item-link",
   ".groupe_grid_block",

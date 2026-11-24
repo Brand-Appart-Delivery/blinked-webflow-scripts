@@ -22,6 +22,7 @@ import { initVideoPlayer } from "./components/video-player.js";
 import { initGallery } from "./components/gallery.js";
 import { initNavDropdown } from "./components/nav-dropdown.js";
 import { initNavScroll } from "./components/nav-scroll.js";
+import { initLogoMarquee } from "./components/logo-marquee.js";
 import { initCardsReveal } from "./animations/cards-reveal.js";
 import { initImageReveal } from "./animations/image-reveal.js";
 import { initParallax, initStoryParallax } from "./animations/parallax.js";
@@ -43,6 +44,7 @@ onReady(() => {
   initMagnetic();
   initNavDropdown();
   initNavScroll();
+  initLogoMarquee();
   initCasesFilter();
   initCasesSlider();
   initVideoPlayer();

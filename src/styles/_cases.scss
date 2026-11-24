@@ -2,12 +2,33 @@
 // Ici : ce que le Designer ne sait pas faire (variante de carte selon le CMS,
 // séparateurs du filtre, animations au survol).
 
+@use "zoom" as *;
+
 // --- Filtre ---------------------------------------------------------------
 
 // Les séparateurs « / » sont des éléments Webflow (.cases_filter-sep).
 
 .cases_filter.is-active .cases_filter-count {
   color: inherit;
+}
+
+// Invisible tant que le JS n'a pas compté les secteurs (évite le saut au
+// load). Même règle dans le head code Webflow, pour qu'elle s'applique
+// avant le chargement de main.css. Repli : visible au bout de 3 s si le
+// JS ne passe pas.
+[data-cases-filters]:not(.is-ready) {
+  opacity: 0;
+  animation: cases-filters-fallback 0s 3s forwards;
+}
+
+[data-cases-filters] {
+  transition: opacity 0.3s ease;
+}
+
+@keyframes cases-filters-fallback {
+  to {
+    opacity: 1;
+  }
 }
 
 // Mobile : la rangée défile horizontalement, sans barre visible.
@@ -49,7 +70,7 @@
   }
 
   .cases_card-image {
-    transform: scale(1.04);
+    transform: scale(hover-zoom(350)); // carte de la grille Réalisations
   }
 }
 

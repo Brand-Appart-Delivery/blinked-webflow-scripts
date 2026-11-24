@@ -12,8 +12,13 @@
 //       [data-cases-card]                carte
 //         [data-cases-sector]            secteur(s) de la carte (liste cachée, CMS)
 //
+//   [data-cases-filters]                 conteneur des boutons
+//
 // Le module compte les cartes par secteur, masque les secteurs vides et
 // filtre la grille au clic. Les secteurs sont comparés par leur nom.
+// Le conteneur des boutons reste invisible jusqu'à ce calcul (classe
+// is-ready), sinon on voit les secteurs vides et les « (0) » bouger au load.
+// Le masquage initial est dans le head code Webflow (avant main.css).
 
 import { requestScrollRefresh } from "../utils/scroll-refresh.js";
 import { prefersReducedMotion } from "../utils/motion.js";
@@ -48,13 +53,19 @@ function animateIn(items) {
 export function initCasesFilter(root = document) {
   root.querySelectorAll("[data-cases]:not([data-cases-ready])").forEach((section) => {
     section.setAttribute("data-cases-ready", "");
+    // Affiche les filtres une fois prêts (aussi si on sort plus tôt).
+    const reveal = () =>
+      section.querySelectorAll("[data-cases-filters]").forEach((el) => el.classList.add("is-ready"));
 
     const cards = [...section.querySelectorAll("[data-cases-card]")].map((card) => ({
       item: itemOf(card),
       sectors: getCardSectors(card),
     }));
     const buttons = [...section.querySelectorAll("[data-cases-filter]")];
-    if (!cards.length || !buttons.length) return;
+    if (!cards.length || !buttons.length) {
+      reveal();
+      return;
+    }
 
     // Valeur de chaque bouton : « all » ou le nom du secteur.
     buttons.forEach((btn) => {
@@ -75,6 +86,7 @@ export function initCasesFilter(root = document) {
       btn.setAttribute("role", "button");
       btn.setAttribute("aria-pressed", String(btn.classList.contains(ACTIVE_CLASS)));
     });
+    reveal();
 
     function apply(value) {
       buttons.forEach((btn) => {

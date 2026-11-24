@@ -7,10 +7,10 @@ import { loadScript, loadStyle } from "../utils/load-asset.js";
 // false = scroll natif. true = Lenis (le script Lenis doit être chargé dans Webflow).
 const SMOOTH_SCROLL_ENABLED = false;
 
-// Pages en scroll fluide même si SMOOTH_SCROLL_ENABLED est à false : fiche cas
-// client (hero photo, rebond natif coupé dans _base.scss). Lenis y adoucit
-// l'arrivée en haut et en bas de page. Chargé à la demande depuis jsDelivr.
-const SMOOTH_PAGES = "[data-dark-hero]";
+// Pages en scroll fluide (Lenis chargé à la demande depuis jsDelivr, notre
+// version). D'abord réservé aux fiches cas client ([data-dark-hero]), étendu
+// à tout le site le 2026-11-24. Pour revenir en arrière : "[data-dark-hero]".
+const SMOOTH_PAGES = "body";
 const LENIS_VERSION = "1.1.20";
 const LENIS_JS = `https://cdn.jsdelivr.net/npm/lenis@${LENIS_VERSION}/dist/lenis.min.js`;
 const LENIS_CSS = `https://cdn.jsdelivr.net/npm/lenis@${LENIS_VERSION}/dist/lenis.css`;

@@ -4,6 +4,8 @@
 // dimensions par écran, les états pilotés par le JS (.is-active, .is-near)
 // et les transitions, que le Designer ne sait pas faire.
 
+@use "zoom" as *;
+
 $ease: cubic-bezier(0.65, 0, 0.35, 1);
 $duration: 0.65s;
 
@@ -68,7 +70,7 @@ $duration: 0.65s;
 }
 
 [data-cslider] .cslider_card.is-active:hover .cslider_image {
-  transform: scale(1.04);
+  transform: scale(hover-zoom(560)); // carte active du carrousel
 }
 
 // Voile : léger sur les cartes fermées, bleu nuit dégradé sur la carte active
@@ -210,9 +212,25 @@ $duration: 0.65s;
   transition: transform 0.3s ease;
 }
 
+// Le lien posé devant la carte (.cslider_overlay) capte la souris : le
+// survol du bouton est donc déclenché par le survol de la carte active.
+[data-cslider] .cslider_card.is-active:hover .cslider_button-icon,
 [data-cslider] .cslider_button:hover .cslider_button-icon,
 [data-cslider] .cslider_button:focus-visible .cslider_button-icon {
   transform: translateX(0.25rem);
+}
+
+// --- Lien sur toute la carte (ajouté par le JS) --------------------------------
+[data-cslider] .cslider_overlay {
+  position: absolute;
+  inset: 0;
+  z-index: 3;
+  cursor: pointer;
+}
+
+// Carte active cliquable partout (Webflow met cursor: auto)
+[data-cslider] .cslider_card.is-active {
+  cursor: pointer;
 }
 
 [data-cslider] .cslider_button:focus-visible,

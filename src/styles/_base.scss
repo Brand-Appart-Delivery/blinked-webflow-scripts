@@ -82,3 +82,17 @@ html:has(.footer_logo_img) {
   background-size: 100% auto;
   background-position: left calc(100% + 7rem);
 }
+
+// Titre avec accent (content/title-accent.js) : invisible tant que le span
+// n'est pas posé, sinon on le voit une frame sans style. Même règle dans le
+// head code Webflow (avant main.css). Repli : visible au bout de 3 s.
+[data-title-accent]:not([data-title-accent-ready]) {
+  opacity: 0;
+  animation: title-accent-fallback 0s 3s forwards;
+}
+
+@keyframes title-accent-fallback {
+  to {
+    opacity: 1;
+  }
+}

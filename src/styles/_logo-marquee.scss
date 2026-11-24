@@ -1,0 +1,21 @@
+// src/styles/_logo-marquee.scss — bandeau de logos (components/logo-marquee.js).
+
+// L'IX Webflow « Logo 3 [Loop] » pose un transform en ligne sur le bandeau :
+// on le neutralise, c'est le JS qui fait défiler les listes.
+.logo3_component {
+  transform: none !important;
+}
+
+.logo3_list {
+  will-change: transform;
+}
+
+// Hauteur réservée avant le chargement des logos (= hauteur max d'un logo),
+// sinon le hero grandit au load. Même règle dans le head code Webflow.
+.logo3_wrapper {
+  min-height: 3.5rem;
+
+  @media screen and (max-width: 767px) {
+    min-height: 4.5rem; // 3rem de logo + 2 × 0,75rem de padding
+  }
+}
