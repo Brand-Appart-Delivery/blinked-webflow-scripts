@@ -1,3 +1,34 @@
 {
-  "presets": []
+  "presets": [
+    {
+      "id": "illustration",
+      "label": "Illustration Blinked",
+      "description": "Illustration de fonctionnalité, fond bleu nuit, accents orange.",
+      "stylePrompt": "Flat vector spot illustration for a SaaS marketing website, in the exact style of a consistent feature-illustration set. Pure 2D flat design: solid color fills only, no gradients, no drop shadows, no textures, no 3D, no photorealism, crisp geometric shapes with generously rounded corners. Background: a single solid deep navy blue (#1C2854) filling the whole rectangular canvas, edge to edge (the rounded corners are added afterwards, do not draw them). Behind the subject, two or three large concentric circles centered on the canvas, very low contrast: slightly lighter navy discs (#28345C) and/or thin navy outline rings (#34448C), partially cropped by the canvas edges. Strict limited palette: deep navy #1C2854, dark navy #141C44, near-black navy #0C1428, white #FFFFFF, light blue-grey #E0E8E8, vivid orange-red accent #F04824, soft salmon #F8B4A8, periwinkle #8094D8. The orange-red #F04824 is the single strong accent and marks the most important element; salmon and periwinkle are secondary accents. Text is never written: any text in the UI is represented by abstract rounded pill-shaped skeleton bars (dark navy for titles, light blue-grey for secondary lines). Icons are simple minimal white line icons with rounded stroke ends, the same stroke weight everywhere. Clean, airy, balanced composition with the subject centered and comfortable margins on every side, calm and professional mood. Choose the layout that best fits the subject, among the two layouts used across the reference set: (A) Product UI layout: one large white rounded-rectangle card (#FFFFFF, corner radius about 6% of its width) centered on the canvas, taking about two thirds of the width, showing a simplified abstract product UI that represents the subject (for example a search bar with result rows, product cards, a video player or overlapping circles), built only from rounded rectangles, circles, pills and skeleton bars in the palette colors; the key element of the UI is highlighted in orange-red #F04824 (a filled shape or a 3px outline), with salmon #F8B4A8 for secondary states; two square icon badges with rounded corners overlap the card: a larger vivid orange-red #F04824 badge on the bottom-left corner of the card and a smaller near-black navy #0C1428 badge on the top-right corner, each containing a white line icon related to the subject. (B) Concept diagram layout: no large white card; an abstract diagram placed directly on the navy background, centered on the concentric circles: nodes (filled circles in white, orange-red or periwinkle, sometimes with a smaller white dot inside, or small rounded-square tiles in #34448C or periwinkle containing white line icons) linked by thin white dashed connector lines, with one larger vivid orange-red #F04824 focal circle containing a white line icon (target, check mark…), and optionally one small white rounded panel such as a simple bar chart with salmon bars and one orange-red bar.",
+      "references": [
+        "references/recherche.png",
+        "references/boutique.png",
+        "references/audience.png",
+        "references/video.png",
+        "references/ciblage.png",
+        "references/conversion.png"
+      ],
+      "formats": [
+        {
+          "id": "card-2x",
+          "label": "Carte 369×264 (@2x)",
+          "width": 738,
+          "height": 528,
+          "cornerRadius": 48
+        },
+        {
+          "id": "card-3x",
+          "label": "Carte 369×264 (@3x)",
+          "width": 1107,
+          "height": 792,
+          "cornerRadius": 72
+        }
+      ]
+    }
+  ]
 }
